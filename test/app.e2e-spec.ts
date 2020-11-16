@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { AppModule } from './../src/app.module';
-import { INestApplication } from '@nestjs/common';
+import { Body, INestApplication, ValidationPipe } from '@nestjs/common';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -12,13 +12,58 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe()); //
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/ (POST): No star_time Should return 400 status', () => {
+    const createEvent = {
+      name: 'My Event Exam',
+    };
+
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .post('/events')
+      .set('Accept', 'application/json')
+      .send(createEvent)
+      .expect(400);
+  });
+  it('/ (POST): There is no end_time Should return 400 status', () => {
+    const createEvent = {
+      name: 'My Event Exam',
+      start_date : "2020-11-01T08:00:00Z",
+
+    };
+
+    return request(app.getHttpServer())
+      .post('/events')
+      .set('Accept', 'application/json')
+      .send(createEvent)
+      .expect(400);
+  });
+  it('/ (POST): end_time before start_time Should return 400 status', () => {
+    const createEvent = {
+      name: 'My Event Exam',
+      start_date : "2020-11-01T08:00:00Z",
+      end_date : "2017-09-01T08:00:00Z"
+    };
+
+    return request(app.getHttpServer())
+      .post('/events')
+      .set('Accept', 'application/json')
+      .send(createEvent)
+      .expect(400);
+  });
+  it('/ (POST): Valid params Should return 200 status', () => {
+    const createEvent = {
+      name: 'My Event Exam',
+      start_date : "2020-09-01T08:00:00Z",
+      end_date : "2020-11-01T08:00:00Z"
+    };
+
+    return request(app.getHttpServer())
+      .post('/events')
+      .set('Accept', 'application/json')
+      .send(createEvent)
+      .expect(201);
   });
 });
