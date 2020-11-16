@@ -64,7 +64,37 @@ $ npm run test:e2e
 
 
 ```
+## API endpoint
+#### Get all events
+```
+GET /events/ HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
 
+```
+#### Create Event
+```
+POST /events/ HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+
+{ "name": "Test ",
+ "start_date" : "2018-08-01T08:00:00Z",
+ "end_date" : "2020-09-01T08:00:00Z"
+}
+```
+#### Publish event
+```
+PUT /events/publish?eventID=5fb254914dcaa01844eee556 HTTP/1.1
+Host: localhost:3000
+
+```
+#### Delete event
+```
+DELETE /events?eventID=5fb2574fce2ac634c0445629 HTTP/1.1
+Host: localhost:3000
+
+```
 
 ## License
 
