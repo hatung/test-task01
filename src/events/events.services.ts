@@ -36,4 +36,16 @@ export class EventsService {
   async findAll(): Promise<Event[]> {
     return this.eventModel.find({ deleted: { $eq: null } }).exec();
   }
+  // filter by start_date end_date
+  async findByDate(first: Date, last: Date): Promise<Event[]> {
+    let filter = { /*start_date: {},*/ end_date: {} };
+    if (first) {
+      filter.end_date = { $gte: first /*, $lt: last */ };
+    }
+    if (last) {
+      filter.end_date = Object.assign(filter.end_date, { $lt: last });
+    }
+    filter = Object.assign(filter, { deleted: { $eq: null } });
+    return this.eventModel.find(filter).exec();
+  }
 }
